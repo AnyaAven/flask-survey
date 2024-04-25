@@ -29,6 +29,8 @@ def display_home():
 @app.post("/begin")
 def redirect_questions():
     """ Redirect to questions """
+    responses.clear()
+
     q_id = str(curr_question_id)
 
     return redirect(f"/questions/{q_id}")
@@ -54,6 +56,10 @@ def handle_answer():
 
     global curr_question_id
 
+    answer = request.form.get("answer")
+    responses.append(answer)
+    print("RESPONSES", answer, responses)
+
     if curr_question_id >= len(survey.questions):
         curr_question_id = 0
 
@@ -61,10 +67,6 @@ def handle_answer():
             "completion.jinja",
             answers=responses
         )
-
-    answer = request.form.get("answer")
-    responses.append(answer)
-    print("RESPONSES", answer, responses)
 
     q_id = str(curr_question_id)
 
