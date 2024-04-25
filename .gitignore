@@ -1,0 +1,5 @@
+node_modules
+.vite
+venv/
+__pychache__
+
