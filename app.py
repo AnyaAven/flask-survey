@@ -35,11 +35,16 @@ def redirect_questions():
 def display_question(q_id):
     """ Display question """
     # I do not not need int(q_id), this is what the decorator does for me with int:
+    resps = session["responses"]
+
+    if len(resps) != q_id:
+        flash("Cannot access invalid question")
+        return redirect(f"/questions/{len(resps)}")
 
     return render_template(
         "question.jinja",
-        question=survey.questions[q_id],
-        id=q_id
+        question=survey.questions[len(resps)],
+        id=len(resps)
     )
 
 
