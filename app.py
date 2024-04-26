@@ -9,7 +9,7 @@ app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 
 debug = DebugToolbarExtension(app)
 
-responses = []
+# responses = []
 
 @app.get("/")
 def display_home():
@@ -27,8 +27,8 @@ def display_home():
 
 @app.post("/begin")
 def redirect_questions():
-    """ Redirect to questions """ #FIXME: go to first question and we are clearing
-    responses.clear() # <--- side effect
+    """ Redirect to the first question and clear out responses """
+    session["responses"] = [] # <--- side effect
 
     return redirect("/questions/0")
 
@@ -49,8 +49,11 @@ def display_question(q_id):
 def handle_answer(q_id):
     """ Redirect to next question or show completion if no questions remain"""
 
-    answer = request.form.get("answer")
-    responses.append(answer)
+    answer = request.form["answer"]
+
+    resps = session["responses"]
+    resps.append(answer)
+    session["responses"] = resps
 
     # TODO: use len(responses) to do math for the id
     q_id += 1
@@ -70,6 +73,7 @@ def completetion_page():
     # questions_and_answers = dict(zip(responses, survey.questions) this didn't work because the responses are not unique keys
 
     prompts = [q.prompt for q in survey.questions]
+    responses = session["responses"]
     return render_template(
             "completion.jinja",
             questions=prompts,
