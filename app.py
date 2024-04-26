@@ -27,15 +27,15 @@ def display_home():
 
 @app.post("/begin")
 def redirect_questions():
-    """ Redirect to questions """
-    responses.clear()
+    """ Redirect to questions """ #FIXME: go to first question and we are clearing
+    responses.clear() # <--- side effect
 
-    return redirect(f"/questions/0")
+    return redirect("/questions/0")
 
 
 @app.get("/questions/<int:q_id>")
 def display_question(q_id):
-    """ Display question"""
+    """ Display question """
     # I do not not need int(q_id), this is what the decorator does for me with int:
 
     return render_template(
@@ -44,7 +44,7 @@ def display_question(q_id):
         id=q_id
     )
 
-
+# FIXME: no query params
 @app.post("/answer/<int:q_id>")
 def handle_answer(q_id):
     """ Redirect to next question or show completion if no questions remain"""
@@ -52,6 +52,7 @@ def handle_answer(q_id):
     answer = request.form.get("answer")
     responses.append(answer)
 
+    # TODO: use len(responses) to do math for the id
     q_id += 1
 
     # If no more questions remain
@@ -66,7 +67,7 @@ def handle_answer(q_id):
 def completetion_page():
     """ Display thank you page with filled in answers"""
 
-    # questions_and_answers = dict(zip(responses, survey.questions)
+    # questions_and_answers = dict(zip(responses, survey.questions) this didn't work because the responses are not unique keys
 
     prompts = [q.prompt for q in survey.questions]
     return render_template(
