@@ -3,14 +3,15 @@
 
   <h1>{{ question.prompt }}</h1>
 
-  <form action="/answer" method="POST">
+  <form action="/answer/{{ id }}" method="POST">
 
     {% for choice in question.choices %}
       <p>
         <input
             type="radio"
             name="answer"
-            value="{{ choice }}">
+            value="{{ choice }}"
+            required>
           {{ choice }}
       </p>
 
