@@ -10,11 +10,10 @@ app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 debug = DebugToolbarExtension(app)
 
 responses = []
-curr_question_id = 0
 
 @app.get("/")
 def display_home():
-    """ Display surveys title in the homepage """
+    """ Display opening page of the survey """
 
     return render_template(
         "survey_start.jinja",
@@ -31,18 +30,13 @@ def redirect_questions():
     """ Redirect to questions """
     responses.clear()
 
-    q_id = str(curr_question_id)
-
-    return redirect(f"/questions/{q_id}")
+    return redirect(f"/questions/0")
 
 
-@app.get("/questions/<q_id>")
+@app.get("/questions/<int:q_id>")
 def display_question(q_id):
     """ Display question"""
-
-    q_id = int(q_id)
-    global curr_question_id
-    curr_question_id += 1
+    # I do not not need int(q_id), this is what the decorator does for me with int:
 
     return render_template(
         "question.jinja",
@@ -50,24 +44,32 @@ def display_question(q_id):
         id=q_id
     )
 
-@app.post("/answer")
-def handle_answer():
-    """ Redirect to next question or show completion if no other questions"""
 
-    global curr_question_id
+@app.post("/answer/<int:q_id>")
+def handle_answer(q_id):
+    """ Redirect to next question or show completion if no questions remain"""
 
     answer = request.form.get("answer")
     responses.append(answer)
-    print("RESPONSES", answer, responses)
 
-    if curr_question_id >= len(survey.questions):
-        curr_question_id = 0
+    q_id += 1
 
-        return render_template(
-            "completion.jinja",
-            answers=responses
-        )
+    # If no more questions remain
+    if q_id >= len(survey.questions):
+        return redirect("/thank-you")
 
-    q_id = str(curr_question_id)
-
+    # Else redirect to the next question
     return redirect(f"/questions/{q_id}")
+
+
+@app.get("/thank-you")
+def completetion_page():
+    """ Display thank you page with filled in answers"""
+
+    questions_and_answers = dict(zip(responses, survey.questions))
+
+    print("RESPS", responses, "QUESTS", survey.questions, "QnA", questions_and_answers)
+    return render_template(
+            "completion.jinja",
+            questions_answers=questions_and_answers
+        )
