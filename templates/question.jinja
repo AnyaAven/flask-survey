@@ -3,7 +3,7 @@
 
   <h1>{{ question.prompt }}</h1>
 
-  <form action="/answer/{{ id }}" method="POST"> {# remove the param #}
+  <form action="/answer" method="POST">
 
     {% for choice in question.choices %}
       <p>

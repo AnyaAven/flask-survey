@@ -9,8 +9,6 @@ app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 
 debug = DebugToolbarExtension(app)
 
-# responses = []
-
 @app.get("/")
 def display_home():
     """ Display opening page of the survey """
@@ -44,9 +42,9 @@ def display_question(q_id):
         id=q_id
     )
 
-# FIXME: no query params
-@app.post("/answer/<int:q_id>")
-def handle_answer(q_id):
+
+@app.post("/answer")
+def handle_answer():
     """ Redirect to next question or show completion if no questions remain"""
 
     answer = request.form["answer"]
@@ -55,15 +53,12 @@ def handle_answer(q_id):
     resps.append(answer)
     session["responses"] = resps
 
-    # TODO: use len(responses) to do math for the id
-    q_id += 1
-
     # If no more questions remain
-    if q_id >= len(survey.questions):
+    if len(resps) >= len(survey.questions):
         return redirect("/thank-you")
 
     # Else redirect to the next question
-    return redirect(f"/questions/{q_id}")
+    return redirect(f"/questions/{len(resps)}")
 
 
 @app.get("/thank-you")
