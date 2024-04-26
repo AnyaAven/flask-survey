@@ -66,13 +66,11 @@ def handle_answer(q_id):
 def completetion_page():
     """ Display thank you page with filled in answers"""
 
+    # questions_and_answers = dict(zip(responses, survey.questions)
+
     prompts = [q.prompt for q in survey.questions]
-
-    # questions_and_answers = dict(zip(responses, survey.questions))
-    questions_and_answers =
-
-    print("RESPS", responses, "QUESTS", survey.questions, "QnA", questions_and_answers)
     return render_template(
             "completion.jinja",
-            questions_answers=questions_and_answers
+            questions=prompts,
+            answers=responses
         )

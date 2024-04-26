@@ -4,9 +4,9 @@
 
   <h1>Thanks for completing this survey!</h1>
   <ul>
-  {% for answer in questions_answers %}
+  {% for question in questions %}
 
-    <li>Q: {{ questions_answers[answer].prompt }} A: {{ answer }}</li>
+    <li>Q: {{ question }} A: {{ answers[loop.index0] }}</li>
   {% endfor %}
   </ul>
 {% endblock %}
